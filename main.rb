@@ -20,4 +20,4 @@ gdata = Domain.new(filename)
 gdata.readfile(threshold)
 gdata.make_domain_hash
 gdata.compare_combi('Group1', 'Group2')
-gdata.combi_test('TestData.txt')
+gdata.combination_test('TestData.txt')

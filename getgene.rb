@@ -12,6 +12,8 @@ Group2  SP1'  sp1'.domtblout
 ...
 
 =end
+require_relative "outeraction"
+require_relative "test_result"
 
 class Domain
 
@@ -21,6 +23,8 @@ class Domain
   NON_CONSERVED =0
   PFAMID = 0
   ALIGNMENTSTART = 1
+  include Outerwork
+  include Compare_test
 
   def initialize(listfile) # make domain array for each gene  
     list_file = File.open(listfile, "r")  # Input list file
@@ -67,7 +71,7 @@ class Domain
       }
       mem += 1
     end
-    out_read_file
+    out_read_file(@gene_hash)
   end
 
   def make_domain_hash # domain array to domain conbi hash
@@ -88,11 +92,11 @@ class Domain
       puts "Done: make combi #{grp}"
     end
 
-    out_domcom_to_file # output to file
+    out_domcom_to_file(@domcom) # output to file
   end
 
   def compare_domain(group1, group2)
-    exit if can_compare?(group1, group2) == 1 # group1 & group2 exist?
+    exit if can_compare?(@group, group1, group2) == 1 # group1 & group2 exist?
     puts "Start: compare domain"
 
     # main part
@@ -112,7 +116,7 @@ class Domain
   end
 
   def compare_combi(group1, group2) # compare domcom1 domain conbination and domcom2 couterpart
-    exit if can_compare?(group1, group2) == 1  # group1 & group2 exist?
+    exit if can_compare?(@group, group1, group2) == 1  # group1 & group2 exist?
     @dom_comb_mat = Hash.new # key => 'domain comb', value => CONSERVED or  NON_CONSERVED 
 
     # main part
@@ -125,7 +129,7 @@ class Domain
         end
       end
     end
-    out_domcom_compare_file(group1, group2)
+    out_compare_to_file(@dom_comb_mat, @domcom, group1, group2, "comb")
     puts "Done: compare domain conbination"
   end
 
@@ -134,97 +138,11 @@ class Domain
     
   end
   
-  def combi_test(testfile)
-    testdata = File.open(testfile, "r")
-    test_result = File.open("result_test", "w")
-    testdata.each_line do |line|
-      if line.to_s.include?("#") then
-      else
-        test = line.split("\s")
-        rslt = @dom_comb_mat.fetch(test, nil) 
-        rvsr = @dom_comb_mat.fetch(test.reverse, nil) 
-        if rslt == CONSERVED then result1 = 'o'
-        else  result1 = 'x'
-        end
-        if rvsr == CONSERVED then result2 = 'o'
-        else  result2 = 'x'
-        end
-        test_result.puts("#{test.join("\t")}\t#{result1}\t#{result2}")
-      end
-    end
-    testdata.close
-    test_result.close
-    puts "Done: Test"
+  def combination_test(testfile)
+    combi_test(@dom_comb_mat, testfile)
   end
 
   private
-  def out_read_file
-    @gene_hash.each_key do |group|
-      gene_file = File.open("#{group}.dom", "w")
-      @gene_hash[group].each_key do |gene|
-        gene_file.print("#{gene}\t#{@gene_hash[group].fetch(gene).join("\t")}\n")
-      end
-      gene_file.close
-    end
-    puts "Save gene hash"      
-  end
-
-  def out_domcom_to_file # output domain conbinations to outfile
-    @domcom.each_key do |group|
-      comb_file = File.open("#{group}.comb", "w")
-      @domcom[group].each_key do |domain_comb|
-        comb_file.print("#{domain_comb.join("\t")}\n")
-      end
-      comb_file.close
-    end
-    puts "Save domain conbination hash"
-  end
-
-  def out_domain_compare_file(group1, group2)     # output domain conbinations to outfile
-    out_file1 = File.open("#{group1}_spec.dom", "w") # domcom1 specific domain combi
-    out_file2 = File.open("#{group2}_spec.dom", "w") # domcom2 specific domain combi
-    out_file_cnsv = File.open("#{group1}_#{group2}_conserved.dom", "w") # common domain conbi    
-    @dom_mat.each_key do |key|
-      if @dom_mat[key] == CONSERVED then  
-        out_file_cnsv.print("#{key}\n") 
-      elsif @dom_mat[key] == NON_CONSERVED && @domain_hash[group1].fetch(key, nil) != nil then 
-        out_file1.print("#{key}\n")
-      elsif @dom_mat[key] == NON_CONSERVED && @domain_hash[group2].fetch(key, nil) != nil then 
-        out_file2.print("#{key}\n")
-      else  puts "Unexpected Error in out_domcom_compare_file."; exit
-      end
-    end
-    out_file_cnsv.close
-    out_file1.close
-    out_file2.close
-  end
-
-  def out_domcom_compare_file(group1, group2)     # output domain conbinations to outfile
-    out_file1 = File.open("#{group1}_spec.domcom", "w") # domcom1 specific domain combi
-    out_file2 = File.open("#{group2}_spec.domcom", "w") # domcom2 specific domain combi
-    out_file_cnsv = File.open("#{group1}_#{group2}_conserved.domcom", "w") # common domain conbi    
-    @dom_comb_mat.each_key do |key|
-      if @dom_comb_mat[key] == CONSERVED then  
-        out_file_cnsv.print("#{key.join("\t")}\n") 
-      elsif @dom_comb_mat[key] == NON_CONSERVED && @domcom[group1].fetch(key, nil) != nil then
-        out_file1.print("#{key.join("\t")}\n")
-      elsif @dom_comb_mat[key] == NON_CONSERVED && @domcom[group2].fetch(key, nil) != nil then 
-        out_file2.print("#{key.join("\t")}\n")
-      else  puts "Unexpected Error in out_domcom_compare_file."; exit
-      end
-    end
-    out_file_cnsv.close
-    out_file1.close
-    out_file2.close
-  end
-
-  def count(i) # counter
-    i_count = i + 1
-    if i_count % 100 == 1 then print "#{i_count}.."
-    end
-    return i_count
-  end
-
   def store_domain(line, threshold, grp, mem, gene_nowgene)
     if line.to_s.include?("#") then
     else
@@ -275,23 +193,6 @@ class Domain
         @gene_domcom[group].fetch(key).push(query[i], query[j])
         @domcom[group].store([query[i], query[j]], 0)
       end
-    end
-  end
-
-  def can_compare?(group1, group2)
-    if @group.fetch(group1, nil) == nil ||
-        @group.fetch(group2, nil) == nil then
-      puts 'Error: No such groups'
-      return 1
-    else
-      return 0
-    end
-  end
-  
-  def flip(now_group, group1, group2)
-    if    now_group == group1 then  return group2
-    elsif now_group == group2 then  return group1
-    else  puts "Error in flip function"; exit
     end
   end
 
