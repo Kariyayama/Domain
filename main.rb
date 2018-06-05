@@ -3,7 +3,7 @@
 USAGE: ruby THIS_SCRIPT INPUTFILE
 =end
 
-require_relative 'getgene'
+require_relative 'compare'
 
 if ARGV.length != 1 then
   puts "----------------------------------------"
@@ -16,8 +16,9 @@ end
 filename = ARGV.shift
 threshold = 10 ** -4
 
-gdata = Domain.new(filename)
+gdata = Compare.new(filename)
 gdata.readfile(threshold)
 gdata.make_domain_hash
 gdata.compare_combi('Group1', 'Group2')
 gdata.combination_test('TestData.txt')
+gdata.make_gene_table('Group1')
