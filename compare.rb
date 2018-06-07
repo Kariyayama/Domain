@@ -89,7 +89,7 @@ class Compare
         end
       end
     end
-    out_domain_compare_file(group1, group2)
+    out_compare_to_file(@dom_mat, @domain_hashs, group1, group2, "dom")
     puts "Done: compare domain"
   end
 
@@ -109,6 +109,13 @@ class Compare
     end
     out_compare_to_file(@dom_comb_mat, @domcoms, group1, group2, "comb")
     puts "Done: compare domain conbination"
+  end
+
+  def make_gene_number_table(main)
+    r = output_as_number_table(main, [@gene_hashs, @gene_domcoms], [@dom_mat, @dom_comb_mat])
+    if r == 0 then puts "Done: Output table (csv file)"
+    else puts "Error end"; exit
+    end
   end
 
   def make_gene_table(main)

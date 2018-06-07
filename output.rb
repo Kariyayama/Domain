@@ -48,6 +48,42 @@ module Outputer
     out_file2.close
   end
 
+  def output_as_number_table(main, gene_domain, domain_matrix)
+    conserved     = 1
+    non_conserved = 0
+    single = 0
+    combi  = 1
+    if gene_domain[single].fetch(main, nil) == nil || gene_domain[combi].fetch(main, nil) == nil then 
+      puts 'Error: No such Group!'
+      exit
+    else
+      outfile = File.open("result_table.csv", "w")
+      outfile.puts("Gene_name,\tConserved Domain,\tUnique Domain,\tConserved Domain Combination\t,Unique Domain Combination")
+
+      gene_domain[combi][main].each_key do |gene|
+        dom = [[0, 0], [0, 0]]
+        [combi, single].each do |i| 
+          gene_domain[i][main].fetch(gene).each do |target|
+            if domain_matrix[i].fetch(target) == conserved then
+              dom[i][conserved] += 1
+            elsif domain_matrix[i].fetch(target) == non_conserved then
+              dom[i][non_conserved] += 1
+            else
+              puts "Error!, Exit"
+              return 1
+            end
+          end
+        end
+        outfile.puts(
+                     "#{gene},\t#{dom[single][conserved]},\t#{dom[single][non_conserved]},\t#{dom[combi][conserved]},\t#{dom[combi][non_conserved]}"
+                     )
+        
+      end
+      outfile.close
+      return 0
+    end
+  end
+
   def output_as_table(main, gene_domcom, combination_matrix)
     conserved     = 1
     non_conserved = 0
@@ -56,23 +92,24 @@ module Outputer
       exit
     else
       outfile = File.open("result_table.csv", "w")
-      outfile.puts("Gene_name,Conserved Domain Combination,Unique Domain Combination")
+      outfile.puts("Gene_name,\tConserved Domain Combination number\t,,Unique Domain Combination number,,")
       gene_domcom[main].each_key do |gene|
-        cnsv = Array.new
-        noncnsv = Array.new
+        dom = Array.new(2){Array.new}
         gene_domcom[main].fetch(gene, nil).each do |combi|
           if combination_matrix.fetch(combi) == conserved then
-            cnsv.push(combi.join("-"))
+            dom[conserved].push(combi.join("-"))
           elsif combination_matrix.fetch(combi) == non_conserved then
-            noncnsv.push(combi.join("-"))
+            dom[non_conserved].push(combi.join("-"))
           else
             puts "Error!, Exit"
             return 1
           end
         end
-        if cnsv == [] then cnsv = ['-']  end
-        if noncnsv == [] then noncnsv = ['-'] end 
-        outfile.puts("#{gene},\t#{cnsv.join("\t")},\t#{noncnsv.join("\t")}")
+        if dom[conserved] == [] then dom[conserved] = ['-']; cnsv_num = 0
+        elsif dom[conserved].is_a?(Array) then cnsv_num = dom[conserved].length end
+        if dom[non_conserved] == [] then dom[non_conserved] = ['-']; noncnsv_num = 0 
+        elsif dom[non_conserved].is_a?(Array) then noncnsv_num = dom[non_conserved].length end 
+        outfile.puts("#{gene},\t#{cnsv_num},\t#{dom[conserved].join("\t")},\t#{noncnsv_num},\t#{dom[non_conserved].join("\t")}")
       end
       outfile.close
     end

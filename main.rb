@@ -19,6 +19,7 @@ threshold = 10 ** -4
 gdata = Compare.new(filename)
 gdata.readfile(threshold)
 gdata.make_domain_hash
+gdata.compare_domain('Group1', 'Group2')
 gdata.compare_combi('Group1', 'Group2')
 gdata.combination_test('TestData.txt')
-gdata.make_gene_table('Group1')
+gdata.make_gene_number_table('Group1')
