@@ -27,18 +27,18 @@ module Outputer
     puts "Save domain conbination hash"
   end
 
-  def out_compare_to_file(matrix, hash, group1, group2, type)     # output domain conbinations to outfile
+  def out_compare_to_file(matrix, hash, group, type)     # output domain conbinations to outfile
     conserved = 1
     non_conserved =0
-    out_file1 = File.open("#{group1}_spec.#{type}", "w") # domcom1 specific domain combi
-    out_file2 = File.open("#{group2}_spec.#{type}", "w") # domcom2 specific domain combi
-    out_file_cnsv = File.open("#{group1}_#{group2}_conserved.#{type}", "w") # common domain conbi    
+    out_file1 = File.open("#{group[0]}_spec.#{type}", "w") # domcom1 specific domain combi
+    out_file2 = File.open("#{group[1]}_spec.#{type}", "w") # domcom2 specific domain combi
+    out_file_cnsv = File.open("#{group[0]}_#{group[1]}_conserved.#{type}", "w") # common domain conbi    
     matrix.each_key do |key|
       if matrix[key] == conserved then  
         out_file_cnsv.print("#{key}\n") 
-      elsif matrix[key] == non_conserved && hash[group1].fetch(key, nil) != nil then 
+      elsif matrix[key] == non_conserved && hash[group[0]].fetch(key, nil) != nil then 
         out_file1.print("#{key}\n")
-      elsif matrix[key] == non_conserved && hash[group2].fetch(key, nil) != nil then 
+      elsif matrix[key] == non_conserved && hash[group[1]].fetch(key, nil) != nil then 
         out_file2.print("#{key}\n")
       else  puts "Unexpected Error in out_compare_to_file."; exit
       end
@@ -58,7 +58,7 @@ module Outputer
       exit
     else
       outfile = File.open("result_table.csv", "w")
-      outfile.puts("Gene_name,\tConserved Domain,\tUnique Domain,\tConserved Domain Combination\t,Unique Domain Combination")
+      outfile.puts("Gene_name\tConserved Domain\tUnique Domain\tConserved Domain Combination\tUnique Domain Combination")
 
       gene_domain[combi][main].each_key do |gene|
         dom = [[0, 0], [0, 0]]
@@ -75,7 +75,7 @@ module Outputer
           end
         end
         outfile.puts(
-                     "#{gene},\t#{dom[single][conserved]},\t#{dom[single][non_conserved]},\t#{dom[combi][conserved]},\t#{dom[combi][non_conserved]}"
+                     "#{gene}\t#{dom[single][conserved]}\t#{dom[single][non_conserved]}\t#{dom[combi][conserved]}\t#{dom[combi][non_conserved]}"
                      )
         
       end

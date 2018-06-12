@@ -1,0 +1,16 @@
+Group2	1	B_floridae.domtblout
+Group2	2	C_elegans.domtblout
+Group2	3	C_intestinalis.domtblout
+Group2	4	D_melanogaster.domtblout
+Group1	1	D_rerio.domtblout
+Group1	2	G_gallus.domtblout
+Group1	3	H_sapiens.domtblout
+Group2	5	L_gigantea.domtblout
+Group1	4	M_musculus.domtblout
+Group2	6	N_vectensis.domtblout
+#Group3	1	P_marinus.domtblout
+#Group3	2	PmarSIMR.domtblout
+Group2	7	Sea_urchin.domtblout
+Group2	8	T_adhaerens.domtblout
+Group1	5	T_rubripes.domtblout
+Group1	6	X_tropicalis.domtblout

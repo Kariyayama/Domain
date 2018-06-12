@@ -20,9 +20,9 @@ module Smallwork
     end
   end
   
-  def flip(now_group, group1, group2)
-    if    now_group == group1 then  return group2
-    elsif now_group == group2 then  return group1
+  def flip(now_group, group)
+    if    now_group == group[0] then  return group[1]
+    elsif now_group == group[1] then  return group[0]
     else  puts "Error in flip function"; exit
     end
   end
