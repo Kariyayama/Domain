@@ -4,8 +4,9 @@ require 'date'
 
 listfile = ARGV.shift.chomp
 tablefile = ARGV.shift.chomp
+threshold = ARGV.shift.chomp.to_f
 listpath = './domtblout/'
-threshold = 10 ** -3
+# threshold = 10 ** -3
 listhash = Hash.new
 
 File.open(listfile, "r").each_line do |list|

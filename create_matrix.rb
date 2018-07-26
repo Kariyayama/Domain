@@ -3,8 +3,9 @@ require_relative "domain"
 require 'date'
 
 listname = ARGV.shift.chomp
+threshold = ARGV.shift.chomp.to_f
 listpath = './domtblout/'
-threshold = 10 ** -3
+#threshold = 10 ** -3
 listhash = Hash.new
 domcom = Hash.new
 domain = Hash.new
@@ -23,7 +24,7 @@ end
 # Create domain table
 outfile1 = File.open('domain_out.csv', "w")
 outfile1.puts "##{Date.today}"
-outfile1.puts "#Threshold value:#{threshold value}"
+outfile1.puts "#Threshold value: #{threshold}"
 outfile1.print "#domain,"
 listhash.each_key do |key|
   outfile1.print "#{key},"
@@ -45,9 +46,9 @@ outfile1.close
 
 # Create domcom table
 outfile2 = File.open('combi_out.csv', "w")
-outfile1.puts "##{Date.today}"
-outfile1.puts "#Threshold value:#{threshold value}"
-outfile1.print "#"
+outfile2.puts "##{Date.today}"
+outfile2.puts "#Threshold value: #{threshold}"
+outfile2.print "#"
 listhash.each_key do |key|
   outfile2.print "#{key},"
 end
