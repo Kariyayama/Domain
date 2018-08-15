@@ -15,17 +15,15 @@ class Domtblout
     @gene_hash     = Hash.new  # key:gene    value:domain hash
     @domain_hash   = Hash.new  # key:domain  value: EXIST
     @file = file
-    mem   = 1
     
     domtblout = File.open(@file, "r") 
     puts "start: make hash #{@file.split('/')[-1]}"
     gene_nowgene = [nil, Array.new(2){Array.new}]
     domtblout.each_line{|x|
-      gene_nowgene = store_domain(x, evalue, c_evalue, mem, gene_nowgene)
+      gene_nowgene = store_domain(x, evalue, c_evalue, gene_nowgene)
     }
     puts "Done: make hash #{@file.split('/')[-1]}"
     domtblout.close
-    mem += 1
   end
 
   def create_domain_combi # domain array to domain conbi hash
@@ -43,7 +41,7 @@ class Domtblout
   end
   
   private
-  def store_domain(line, evalue, c_evalue, mem, gene_nowgene)
+  def store_domain(line, evalue, c_evalue, gene_nowgene)
     if line.to_s.include?("#") then
     else
       row = line.split("\s")
