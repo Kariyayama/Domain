@@ -5,18 +5,18 @@ type       = ARGV.shift
 domfile    = ARGV.shift
 domcomfile = ARGV.shift
 
-tp = 9 if type.include?('gnath') 
-tp = 8 if type.include?('vert')
+tp = 8 if type.include?('gnath') 
+tp = 7 if type.include?('vert')
 
 phash = Hash.new
 file = File.open(domfile, "r")
 file.each_line do |line1|
   if line1.include?('#') then
   else
-    l1 = line1.split(',')
-    pf = l1[0]
-    if l1[1..tp] == Array.new(tp){"0"} then
-      phash.store(l1[0], 0)
+    l1 = line1.chomp.split(',')
+    pf = l1[-1]
+    if l1[0..tp] == Array.new(tp + 1){"0"} then
+      phash.store(pf, 0)
     end
   end
 end

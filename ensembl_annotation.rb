@@ -3,9 +3,10 @@ require 'date'
 
 gene_list = ARGV.shift
 ensdata   = ARGV.shift
-animal    = ARGV.shift.chomp
-gene_end = 17 if animal == 'human'   # human
-gene_end = 20 if animal == 'lamprey' # lamprey
+# animal    = ARGV.shift.chomp
+# gene_end = 17 if animal == 'human'   # human
+# gene_end = 20 if animal == 'lamprey' # lamprey
+# gene_end = 20 if animal == 'zebrafish'
 
 gnhash = Hash.new
 gnfile = File.open(gene_list, "r")
@@ -21,6 +22,7 @@ puts "##{Date.today}"
 ensfile = File.open(ensdata, "r")
 ensfile.each_line do |line|
   if line.include?('>') then
+    gene_end = line.split("\s")[0].length - 1
     gene = line[1..gene_end]
 
     if gnhash.fetch(gene, nil) != nil then
