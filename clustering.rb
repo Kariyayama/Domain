@@ -1,12 +1,10 @@
 #!/usr/bin/ruby
 require 'date'
 
-type       = ARGV.shift
+# type       = ARGV.shift
+pattern    = ARGV.shift
 domfile    = ARGV.shift
 domcomfile = ARGV.shift
-
-tp = 8 if type.include?('gnath') 
-tp = 7 if type.include?('vert')
 
 phash = Hash.new
 file = File.open(domfile, "r")
@@ -15,7 +13,7 @@ file.each_line do |line1|
   else
     l1 = line1.chomp.split(',')
     pf = l1[-1]
-    if l1[0..tp] == Array.new(tp + 1){"0"} then
+    if line1 =~ /#{pattern}/ then
       phash.store(pf, 0)
     end
   end
@@ -30,8 +28,7 @@ file2.each_line do |linec|
     i = 0
     lc = linec.chomp.split(',')
     if    phash.fetch(lc[-2],nil) == nil && phash.fetch(lc[-1], nil) == nil  then  puts "#{linec.chomp},class2"
-    elsif phash.fetch(lc[-2],nil) == nil || phash.fetch(lc[-1], nil) == nil  then  puts "#{linec.chomp},class1"
-    else puts "#{linec.chomp},uniq"
+    else puts "#{linec.chomp},class1"
     end
   end
 end
