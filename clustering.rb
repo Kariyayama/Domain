@@ -13,20 +13,21 @@ file.each_line do |line1|
   else
     l1 = line1.chomp.split(',')
     pf = l1[-1]
-    if line1 =~ /#{pattern}/ then
+#    if line1 =~ /#{pattern}/ then
+    if line1.include?(pattern)
       phash.store(pf, 0)
     end
   end
 end
 file.close  
-
+# p phash
 puts "##{Date.today}"
 file2 = File.open(domcomfile, "r")
 file2.each_line do |linec|
+  lc = linec.chomp.split(',')
   if linec.include?('#') then
-  else
+  elsif lc[15] != lc[16] 
     i = 0
-    lc = linec.chomp.split(',')
     if    phash.fetch(lc[-2],nil) == nil && phash.fetch(lc[-1], nil) == nil  then  puts "#{linec.chomp},class2"
     else puts "#{linec.chomp},class1"
     end

@@ -3,10 +3,6 @@ require 'date'
 
 gene_list = ARGV.shift
 ensdata   = ARGV.shift
-# animal    = ARGV.shift.chomp
-# gene_end = 17 if animal == 'human'   # human
-# gene_end = 20 if animal == 'lamprey' # lamprey
-# gene_end = 20 if animal == 'zebrafish'
 
 gnhash = Hash.new
 gnfile = File.open(gene_list, "r")
